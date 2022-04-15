@@ -15,7 +15,10 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
-  DateTime _eventTimer = DateTime.now();
+  // DateTime _eventTimer = DateTime.now();
+  late DateTime _eventTimer;
+
+  bool _first = true;
 
   void _decreaseTimer() {
     setState(() {
@@ -27,7 +30,15 @@ class _EventScreenState extends State<EventScreen> {
   Widget build(BuildContext context) {
     final eventToShow = ModalRoute.of(context)!.settings.arguments as Event;
 
-    Timer.periodic(Duration(seconds: 1), (Timer timer) => _decreaseTimer());
+    if (_first) {
+      _eventTimer = eventToShow.deadline ?? DateTime.now();
+      _first = false;
+      Provider.of<Events>(context, listen: false)
+          .updateEventDateline(_eventTimer, eventToShow.id);
+      Timer.periodic(Duration(seconds: 1), (Timer timer) => _decreaseTimer());
+    }
+
+    print(eventToShow.deadline);
 
     return Scaffold(
       appBar: AppBar(

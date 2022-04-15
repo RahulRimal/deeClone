@@ -53,8 +53,8 @@ class DateTimeHelper {
   }
 
   static DateTime decreaseTime(DateTime time) {
-    // return time.subtract(Duration(seconds: 1));
-    return DateTime(time.year, time.month, time.day, time.hour, time.minute,
-        time.second - 1);
+    return time.subtract(Duration(seconds: 1));
+    // return DateTime(time.year, time.month, time.day, time.hour, time.minute,
+    //     time.second - 1);
   }
 }

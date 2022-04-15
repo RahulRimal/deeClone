@@ -54,46 +54,50 @@ class _HomeScreenState extends State<HomeScreen> {
 
       body: ListView.builder(
         itemBuilder: (context, index) {
-          return ListTile(
-            onTap: () {
-              Navigator.pushNamed(context, EventScreen.routeName,
-                  arguments: eventsToShow[index]);
-            },
-            contentPadding: EdgeInsets.all(5),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(
-                  'https://cdn.pixabay.com/photo/2017/05/25/15/08/jogging-2343558_1280.jpg'),
-            ),
-            title: Center(
-              // child: Hero(
-              //   tag: 'event',
-              child: Text(
-                eventsToShow[index].name as String,
-                style: TextStyle(
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.bold,
-                  // ),
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListTile(
+              onTap: () {
+                Navigator.pushNamed(context, EventScreen.routeName,
+                    arguments: eventsToShow[index]);
+              },
+              contentPadding: EdgeInsets.all(5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(
+                  'https://cdn.pixabay.com/photo/2017/05/25/15/08/jogging-2343558_1280.jpg',
                 ),
               ),
-            ),
-            subtitle: Center(
-              child: Text(
-                // '2 days left',
-                // eventsToShow[index].deadline.toString(),
-                DateTimeHelper.getRemainingTime(
-                    eventsToShow[index].deadline as DateTime),
-                style: TextStyle(fontSize: 15.0),
+              title: Center(
+                // child: Hero(
+                //   tag: 'event',
+                child: Text(
+                  eventsToShow[index].name as String,
+                  style: TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold,
+                    // ),
+                  ),
+                ),
               ),
+              subtitle: Center(
+                child: Text(
+                  // '2 days left',
+                  // eventsToShow[index].deadline.toString(),
+                  DateTimeHelper.getRemainingTime(
+                      eventsToShow[index].deadline as DateTime),
+                  style: TextStyle(fontSize: 15.0),
+                ),
+              ),
+              trailing: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.delete),
+              ),
+              tileColor: Colors.white,
+              iconColor: Colors.blueGrey,
             ),
-            trailing: IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.delete),
-            ),
-            tileColor: Colors.white,
-            iconColor: Colors.blueGrey,
           );
         },
         itemCount: eventsToShow.length,

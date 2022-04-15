@@ -1,4 +1,5 @@
 import 'package:event_counter/providers/events.dart';
+import 'package:event_counter/screens/add_event_screen.dart';
 import 'package:event_counter/screens/event_screen.dart';
 import 'package:event_counter/screens/home_screen.dart';
 import 'package:event_counter/temp.dart';
@@ -24,6 +25,7 @@ class _MyAppState extends State<MyApp> {
             // primarySwatch: Colors.amber,
             ),
         home: HomeScreen(),
+        // home: AddEventScreen(),
         routes: {
           EventScreen.routeName: (ctx) => EventScreen(),
         },
