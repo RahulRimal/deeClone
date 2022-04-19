@@ -9,11 +9,17 @@ import 'package:provider/provider.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
+  static const String routeName = '/home';
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  _deleteEvent(int id) {
+    Provider.of<Events>(context, listen: false).deleteEvent(id);
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Event> eventsToShow = Provider.of<Events>(context).events;
@@ -52,56 +58,85 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
 
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListTile(
-              onTap: () {
-                Navigator.pushNamed(context, EventScreen.routeName,
-                    arguments: eventsToShow[index]);
-              },
-              contentPadding: EdgeInsets.all(5),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(
-                  'https://cdn.pixabay.com/photo/2017/05/25/15/08/jogging-2343558_1280.jpg',
-                ),
-              ),
-              title: Center(
-                // child: Hero(
-                //   tag: 'event',
-                child: Text(
-                  eventsToShow[index].name as String,
-                  style: TextStyle(
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.bold,
-                    // ),
+      body: eventsToShow.length <= 0
+          ? Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Text(
+                      'No Events to show.',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, AddEventScreen.routeName);
+                    },
+                    child: Text('Add Event'),
+                  ),
+                ],
               ),
-              subtitle: Center(
-                child: Text(
-                  // '2 days left',
-                  // eventsToShow[index].deadline.toString(),
-                  DateTimeHelper.getRemainingTime(
-                      eventsToShow[index].deadline as DateTime),
-                  style: TextStyle(fontSize: 15.0),
-                ),
-              ),
-              trailing: IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.delete),
-              ),
-              tileColor: Colors.white,
-              iconColor: Colors.blueGrey,
+            )
+          : ListView.builder(
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.pushNamed(context, EventScreen.routeName,
+                          arguments: eventsToShow[index]);
+                    },
+                    contentPadding: EdgeInsets.all(5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    // leading: CircleAvatar(
+                    //   backgroundImage: NetworkImage(
+                    //     'https://cdn.pixabay.com/photo/2017/05/25/15/08/jogging-2343558_1280.jpg',
+                    //   ),
+                    // ),
+                    title: Center(
+                      // child: Hero(
+                      //   tag: 'event',
+                      child: Text(
+                        eventsToShow[index].name as String,
+                        style: TextStyle(
+                          fontSize: 25.0,
+                          fontWeight: FontWeight.bold,
+                          // ),
+                        ),
+                      ),
+                    ),
+                    subtitle: Center(
+                      child: Text(
+                        // '2 days left',
+                        // eventsToShow[index].deadline.toString(),
+                        DateTimeHelper.getRemainingTime(
+                            eventsToShow[index].deadline as DateTime),
+                        style: TextStyle(fontSize: 15.0),
+                      ),
+                    ),
+                    trailing: IconButton(
+                      onPressed: () {
+                        print(eventsToShow[index].id);
+                        _deleteEvent(eventsToShow[index].id);
+                      },
+                      icon: Icon(Icons.delete),
+                    ),
+                    tileColor: Colors.white,
+                    iconColor: Colors.blueGrey,
+                  ),
+                );
+              },
+              itemCount: eventsToShow.length,
             ),
-          );
-        },
-        itemCount: eventsToShow.length,
-      ),
 
       // body: ListView(
       //   children: [

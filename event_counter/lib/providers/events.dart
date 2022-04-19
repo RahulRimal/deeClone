@@ -8,7 +8,7 @@ class Events with ChangeNotifier {
         name: 'Birthday',
         description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        deadline: new DateTime(2022, 5, 20, 12, 20)),
+        deadline: new DateTime(2022, 5, 20, 12, 00)),
     Event(id: 2, name: 'Anniversary', deadline: new DateTime(2022, 5, 12)),
     Event(id: 3, name: 'Wedding', deadline: new DateTime(2023, 1, 12)),
   ];
@@ -28,24 +28,18 @@ class Events with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteEvent(Event event) {
-    _events.remove(event);
+  // void deleteEvent(Event event) {
+  //   _events.remove(event);
+  //   notifyListeners();
+  // }
+
+  void deleteEvent(int eventId) {
+    _events.removeWhere((event) => event.id == eventId);
     notifyListeners();
   }
 
   void updateEvent(Event newInformation) {
     Event oldInformation = getEventById(newInformation.id);
-
-    // oldInformation = newInformation;
-    // if (newInformation.name != null) {
-    //   oldInformation.name = newInformation.name;
-    // }
-    // if (newInformation.description != null) {
-    //   oldInformation.description = newInformation.description;
-    // }
-    // if (newInformation.deadline != null) {
-    //   oldInformation.deadline = newInformation.deadline;
-    // }
 
     int index = _events.indexOf(oldInformation);
     _events[index] = newInformation;

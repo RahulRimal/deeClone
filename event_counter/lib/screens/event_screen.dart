@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:event_counter/helpers/date_time_helper.dart';
 import 'package:event_counter/models/event.dart';
 import 'package:event_counter/providers/events.dart';
+import 'package:event_counter/screens/edit_event_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,9 +22,11 @@ class _EventScreenState extends State<EventScreen> {
   bool _first = true;
 
   void _decreaseTimer() {
-    setState(() {
-      _eventTimer = DateTimeHelper.decreaseTime(_eventTimer);
-    });
+    if (mounted) {
+      setState(() {
+        _eventTimer = DateTimeHelper.decreaseTime(_eventTimer);
+      });
+    }
   }
 
   @override
@@ -33,12 +36,13 @@ class _EventScreenState extends State<EventScreen> {
     if (_first) {
       _eventTimer = eventToShow.deadline ?? DateTime.now();
       _first = false;
-      Provider.of<Events>(context, listen: false)
-          .updateEventDateline(_eventTimer, eventToShow.id);
+      // Provider.of<Events>(context, listen: false)
+      //     .updateEventDateline(_eventTimer, eventToShow.id);
       Timer.periodic(Duration(seconds: 1), (Timer timer) => _decreaseTimer());
     }
 
-    print(eventToShow.deadline);
+    Provider.of<Events>(context, listen: false)
+        .updateEventDateline(_eventTimer, eventToShow.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -49,7 +53,10 @@ class _EventScreenState extends State<EventScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, EditEventScreen.routeName,
+                  arguments: eventToShow);
+            },
           ),
         ],
       ),

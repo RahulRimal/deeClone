@@ -4,30 +4,29 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class AddEventScreen extends StatefulWidget {
-  const AddEventScreen({Key? key}) : super(key: key);
-
-  static const String routeName = '/add';
+class EditEventScreen extends StatefulWidget {
+  const EditEventScreen({Key? key}) : super(key: key);
+  static const String routeName = '/edit';
 
   @override
-  State<AddEventScreen> createState() => _AddEventScreenState();
+  State<EditEventScreen> createState() => _EditEventScreenState();
 }
 
-class _AddEventScreenState extends State<AddEventScreen> {
+class _EditEventScreenState extends State<EditEventScreen> {
   final _form = GlobalKey<FormState>();
   final _descriptionFocusNode = FocusNode();
 
   DateTime _boughtDate = new DateTime.now();
 
-  final _datePickercontroller = TextEditingController(
-    text: DateFormat('yyyy-MM-dd').format(DateTime.now()).toString(),
-  );
-
-  Event _newEvent = Event(
+  Event _editedEvent = Event(
     id: 999,
     name: '',
     description: '',
     deadline: DateTime.now(),
+  );
+
+  final _datePickercontroller = TextEditingController(
+    text: DateFormat('yyyy-MM-dd').format(DateTime.now()).toString(),
   );
 
   Future<void> _showPicker(BuildContext context) async {
@@ -50,15 +49,32 @@ class _AddEventScreenState extends State<AddEventScreen> {
     }
 
     _form.currentState!.save();
-    Provider.of<Events>(context, listen: false).addEvent(_newEvent);
+    // Provider.of<Events>(context, listen: false).addEvent(_editedEvent);
+    Provider.of<Events>(context, listen: false).updateEvent(_editedEvent);
     Navigator.of(context).pop();
-    // Navigator.of(context).pop();
+    Navigator.of(context).pop();
 
     return true;
   }
 
   @override
+  void didChangeDependencies() {
+    _datePickercontroller.text = DateFormat('yyyy-mm-dd')
+        .format(_editedEvent.deadline as DateTime)
+        .toString();
+
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final receivedEvent = ModalRoute.of(context)!.settings.arguments as Event;
+    _editedEvent = receivedEvent;
+
+    _datePickercontroller.text = DateFormat('yyyy-mm-dd')
+        .format(_editedEvent.deadline as DateTime)
+        .toString();
+
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -70,6 +86,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextFormField(
+                  initialValue: _editedEvent.name,
                   decoration: InputDecoration(
                     labelText: 'Event name',
                   ),
@@ -77,32 +94,32 @@ class _AddEventScreenState extends State<AddEventScreen> {
                     FocusScope.of(context).requestFocus(_descriptionFocusNode);
                   },
                   onSaved: (value) {
-                    _newEvent = Event(
-                      id: _newEvent.id,
+                    _editedEvent = Event(
+                      id: _editedEvent.id,
                       name: value,
-                      description: _newEvent.description,
-                      deadline: _newEvent.deadline,
+                      description: _editedEvent.description,
+                      deadline: _editedEvent.deadline,
                     );
                   },
                 ),
                 TextFormField(
                   focusNode: _descriptionFocusNode,
+                  initialValue: _editedEvent.description,
                   decoration: InputDecoration(
                     labelText: 'Event description',
                   ),
                   keyboardType: TextInputType.multiline,
                   onSaved: (value) {
-                    _newEvent = Event(
-                      id: _newEvent.id,
-                      name: _newEvent.name,
+                    _editedEvent = Event(
+                      id: _editedEvent.id,
+                      name: _editedEvent.name,
                       description: value,
-                      deadline: _newEvent.deadline,
+                      deadline: _editedEvent.deadline,
                     );
                   },
                 ),
                 TextFormField(
-                  controller: _datePickercontroller,
-                  // initialValue: _datePickercontroller.text,
+                  initialValue: _datePickercontroller.text,
                   decoration: InputDecoration(
                     labelText: 'Event Deadline',
                     // suffix: IconButton(
@@ -128,10 +145,10 @@ class _AddEventScreenState extends State<AddEventScreen> {
                     ),
                   ),
                   onSaved: (value) {
-                    _newEvent = Event(
-                      id: _newEvent.id,
-                      name: _newEvent.name,
-                      description: _newEvent.description,
+                    _editedEvent = Event(
+                      id: _editedEvent.id,
+                      name: _editedEvent.name,
+                      description: _editedEvent.description,
                       // deadline: value as DateTime,
                       deadline: DateTime.parse(value as String),
                     );
