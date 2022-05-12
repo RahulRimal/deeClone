@@ -20,7 +20,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: Events())],
+      providers: [
+        ChangeNotifierProvider.value(
+          value: Events(),
+        ),
+      ],
       child: MaterialApp(
         theme: ThemeData(
             // primarySwatch: Colors.amber,
