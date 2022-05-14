@@ -5,6 +5,7 @@ import 'package:event_counter/models/event.dart';
 import 'package:event_counter/providers/events.dart';
 import 'package:event_counter/screens/edit_event_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 class EventScreen extends StatefulWidget {
@@ -31,7 +32,11 @@ class _EventScreenState extends State<EventScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final eventToShow = ModalRoute.of(context)!.settings.arguments as Event;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final eventToShow = args['event'] as Event;
+    final _key = args['key'] as int;
+    // final eventToShow = ModalRoute.of(context)!.settings.arguments as Event;
 
     if (_first) {
       _eventTimer = eventToShow.deadline ?? DateTime.now();
@@ -41,8 +46,17 @@ class _EventScreenState extends State<EventScreen> {
       Timer.periodic(Duration(seconds: 1), (Timer timer) => _decreaseTimer());
     }
 
-    Provider.of<Events>(context, listen: false)
-        .updateEventDateline(_eventTimer, eventToShow.id);
+    // Provider.of<Events>(context, listen: false)
+    //     .updateEventDateline(_eventTimer, eventToShow.id);
+
+    Event _editteEvent = eventToShow;
+    _editteEvent.deadline = _eventTimer;
+
+    Box<Event> box = Hive.box<Event>('events');
+
+    // box.put(eventToShow.id, _editteEvent);
+    // box.put('events', _editteEvent);
+    // box.put(_key, _editteEvent);
 
     return Scaffold(
       appBar: AppBar(
@@ -54,8 +68,14 @@ class _EventScreenState extends State<EventScreen> {
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
-              Navigator.pushNamed(context, EditEventScreen.routeName,
-                  arguments: eventToShow);
+              Navigator.pushNamed(
+                context,
+                EditEventScreen.routeName,
+                arguments: {
+                  'event': eventToShow,
+                  'key': _key,
+                },
+              );
             },
           ),
         ],

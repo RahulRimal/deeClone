@@ -1,6 +1,7 @@
 import 'package:event_counter/models/event.dart';
 import 'package:event_counter/providers/events.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -36,12 +37,13 @@ class _EditEventScreenState extends State<EditEventScreen> {
         firstDate: DateTime(2010),
         lastDate: DateTime(2030)) as DateTime;
 
-    // _datePickercontroller.text = _boughtDate.toString();
-    _datePickercontroller.text =
-        DateFormat('yyyy-mm-dd').format(_boughtDate).toString();
+    _datePickercontroller.text = DateFormat('yyyy-MM-dd').format(_boughtDate);
+    // setState(() {
+    //   _datePickercontroller.text = DateFormat('yyyy-MM-dd').format(_boughtDate);
+    // });
   }
 
-  bool _savePost() {
+  bool _savePost(int key) {
     final _isValid = _form.currentState!.validate();
 
     if (!_isValid) {
@@ -50,28 +52,42 @@ class _EditEventScreenState extends State<EditEventScreen> {
 
     _form.currentState!.save();
     // Provider.of<Events>(context, listen: false).addEvent(_editedEvent);
-    Provider.of<Events>(context, listen: false).updateEvent(_editedEvent);
+    // Provider.of<Events>(context, listen: false).updateEvent(_editedEvent);
+
+    Box<Event> box = Hive.box('events');
+
+    box.put(key, _editedEvent);
+
     Navigator.of(context).pop();
     Navigator.of(context).pop();
 
     return true;
   }
 
-  @override
-  void didChangeDependencies() {
-    _datePickercontroller.text = DateFormat('yyyy-mm-dd')
-        .format(_editedEvent.deadline as DateTime)
-        .toString();
+  // @override
+  // void didChangeDependencies() {
+  //   _datePickercontroller.text = DateFormat('yyyy-MM-dd')
+  //       .format(_editedEvent.deadline as DateTime)
+  //       .toString();
+  //   // _datePickercontroller.text = DateFormat('yyyy-MM-dd').format(_boughtDate);
 
-    super.didChangeDependencies();
-  }
+  //   super.didChangeDependencies();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final receivedEvent = ModalRoute.of(context)!.settings.arguments as Event;
+    // final receivedEvent = ModalRoute.of(context)!.settings.arguments as Event;
+
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    final receivedEvent = args['event'] as Event;
+
+    final _key = args['key'];
+
     _editedEvent = receivedEvent;
 
-    _datePickercontroller.text = DateFormat('yyyy-mm-dd')
+    _datePickercontroller.text = DateFormat('yyyy-MM-dd')
         .format(_editedEvent.deadline as DateTime)
         .toString();
 
@@ -119,7 +135,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
                   },
                 ),
                 TextFormField(
-                  initialValue: _datePickercontroller.text,
+                  controller: _datePickercontroller,
+                  // initialValue: _datePickercontroller.text,
                   decoration: InputDecoration(
                     labelText: 'Event Deadline',
                     // suffix: IconButton(
@@ -156,9 +173,9 @@ class _EditEventScreenState extends State<EditEventScreen> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  child: Text('Add event'),
+                  child: Text('Update event'),
                   onPressed: () {
-                    _savePost();
+                    _savePost(_key);
                   },
                 ),
               ],

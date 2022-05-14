@@ -1,6 +1,7 @@
 import 'package:event_counter/models/event.dart';
 import 'package:event_counter/providers/events.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +25,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
   );
 
   Event _newEvent = Event(
-    id: 999,
+    id: 1,
     name: '',
     description: '',
     deadline: DateTime.now(),
@@ -37,9 +38,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
         firstDate: DateTime(2010),
         lastDate: DateTime(2030)) as DateTime;
 
-    // _datePickercontroller.text = _boughtDate.toString();
-    _datePickercontroller.text =
-        DateFormat('yyyy-mm-dd').format(_boughtDate).toString();
+    _datePickercontroller.text = DateFormat('yyyy-MM-dd').format(_boughtDate);
   }
 
   bool _savePost() {
@@ -50,7 +49,12 @@ class _AddEventScreenState extends State<AddEventScreen> {
     }
 
     _form.currentState!.save();
-    Provider.of<Events>(context, listen: false).addEvent(_newEvent);
+    // Provider.of<Events>(context, listen: false).addEvent(_newEvent);
+
+    Box<Event> box = Hive.box<Event>('events');
+
+    box.add(_newEvent);
+
     Navigator.of(context).pop();
     // Navigator.of(context).pop();
 
@@ -134,6 +138,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       description: _newEvent.description,
                       // deadline: value as DateTime,
                       deadline: DateTime.parse(value as String),
+                      // deadline: DateTime.parse(value.toString()),
                     );
                   },
                 ),
