@@ -39,7 +39,13 @@ class _EventScreenState extends State<EventScreen> {
     // final eventToShow = ModalRoute.of(context)!.settings.arguments as Event;
 
     if (_first) {
-      _eventTimer = eventToShow.deadline ?? DateTime.now();
+      var remained = eventToShow.deadline!.difference(DateTime.now());
+
+      // _eventTimer = remained;
+      // _eventTimer = DateTime.now().add(remained);
+      _eventTimer = DateTimeHelper.durationToDatetime(remained);
+      print(DateTime.now());
+      // _eventTimer = eventToShow.deadline ?? DateTime.now();
       _first = false;
       // Provider.of<Events>(context, listen: false)
       //     .updateEventDateline(_eventTimer, eventToShow.id);
@@ -50,7 +56,7 @@ class _EventScreenState extends State<EventScreen> {
     //     .updateEventDateline(_eventTimer, eventToShow.id);
 
     Event _editteEvent = eventToShow;
-    _editteEvent.deadline = _eventTimer;
+    // _editteEvent.deadline = _eventTimer;
 
     Box<Event> box = Hive.box<Event>('events');
 
@@ -113,6 +119,7 @@ class _EventScreenState extends State<EventScreen> {
 
           Text(
             DateTimeHelper.getDate(eventToShow.deadline as DateTime),
+            // eventToShow.deadline.toString(),
             style: TextStyle(
               fontSize: 40.0,
             ),

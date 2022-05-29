@@ -33,13 +33,13 @@ class DateTimeHelper {
         time.day.toString();
   }
 
-  static String getTime(DateTime time) {
-    return time.hour.toString() +
-        ":" +
-        time.minute.toString() +
-        ":" +
-        time.second.toString();
-  }
+  // static String getTime(DateTime time) {
+  //   return time.hour.toString() +
+  //       ":" +
+  //       time.minute.toString() +
+  //       ":" +
+  //       time.second.toString();
+  // }
 
   static String getTimeCounter(DateTime time) {
     return time.day.toString() +
@@ -56,5 +56,11 @@ class DateTimeHelper {
     return time.subtract(Duration(seconds: 1));
     // return DateTime(time.year, time.month, time.day, time.hour, time.minute,
     //     time.second - 1);
+  }
+
+  static DateTime durationToDatetime(Duration duration) {
+    // return DateTime.now().add(duration);
+    return DateTime(0, 0, duration.inDays, duration.inHours, duration.inMinutes,
+        duration.inSeconds);
   }
 }
